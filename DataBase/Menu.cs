@@ -158,7 +158,7 @@ namespace DataBase
             {
                 xml.Write(sourceList, pathXml);
             }
-            else
+            if (typeOfSerialization == "bin")
             {
                 bin.Write(sourceList, pathBin);
             }
