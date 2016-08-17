@@ -20,26 +20,55 @@ namespace DataBase
 
         public void Show()
         {
-            using (StreamReader sr = new StreamReader("settings.ini"))
+            try
             {
-                typeOfSerialization = sr.ReadLine();
+                using (StreamReader sr = new StreamReader("settings.ini"))
+                {
+                    typeOfSerialization = sr.ReadLine();
+                }
             }
-
+            catch (FileNotFoundException)
+            {
+                Console.WriteLine("Файл конфигурации не найден, создайте файл settings.ini");
+                return;
+            }
+            
             if (typeOfSerialization == "xml")
             {
                 FileInfo fi = new FileInfo(pathXml);
                 if (fi.Exists)
                 {
-                    sourceList = xml.Read(pathXml);
+                    try
+                    {
+                        sourceList = xml.Read(pathXml);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        Console.WriteLine("Файл базы данных поврежден");
+                        return;
+                    }
                 }
             }
-            else
+            else if (typeOfSerialization == "bin")
             {
                 FileInfo fi = new FileInfo(pathBin);
                 if (fi.Exists)
                 {
-                    sourceList = bin.Read(pathBin);
+                    try
+                    {
+                        sourceList = bin.Read(pathBin);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        Console.WriteLine("Файл базы данных поврежден");
+                        return;
+                    }
                 }
+            }
+            else
+            {
+                Console.WriteLine("Файл конфигурации настроен не верно, проверьте settings.ini");
+                return;
             }
 
             option.GetAll(sourceList, listToShow);
